@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Productos from './pages/Productos';
-
+import Login from './pages/login';
 const Dashboard = () => (
   <div>
     <h1 className="text-3xl font-bold text-slate-800">Dashboard</h1>
@@ -20,6 +20,7 @@ function App() {
           
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/productos" element={<Productos />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </Layout>
     </BrowserRouter>
