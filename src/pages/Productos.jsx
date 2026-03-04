@@ -7,6 +7,18 @@ const Productos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // form state (moved before any early returns)
+  const [form, setForm] = useState({
+    nombre: '',
+    precio: '',
+    stock: '',
+    descripcion: '',
+    imagen_url: '',
+    categoria_id: ''
+  });
+  const [submitError, setSubmitError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
     cargarProductos();
   }, []);
@@ -34,6 +46,37 @@ const Productos = () => {
     </div>
   );
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitError(null);
+    setSubmitting(true);
+
+    // convert numeric values
+    const payload = {
+      nombre: form.nombre,
+      precio: parseFloat(form.precio),
+      stock: parseInt(form.stock, 10),
+      descripcion: form.descripcion || null,
+      imagen_url: form.imagen_url || null,
+      categoria_id: form.categoria_id ? parseInt(form.categoria_id, 10) : null
+    };
+
+    try {
+      await api.post('/productos/cargar', payload);
+      setForm({ nombre: '', precio: '', stock: '', descripcion: '', imagen_url: '', categoria_id: '' });
+      cargarProductos();
+    } catch (err) {
+      setSubmitError(err.message || 'Error al enviar');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div>
       <header className="flex justify-between items-center mb-6">
@@ -44,6 +87,82 @@ const Productos = () => {
           {productos.length} items
         </span>
       </header>
+
+      {/* simple product form */}
+      <form onSubmit={handleSubmit} className="mb-8 max-w-md space-y-3 p-4 bg-white rounded shadow">
+        <h2 className="text-xl font-semibold">Agregar producto</h2>
+        {submitError && (
+          <div className="text-red-600 text-sm">{submitError}</div>
+        )}
+        <div>
+          <label className="block text-sm font-medium">Nombre*</label>
+          <input
+            name="nombre"
+            value={form.nombre}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Precio*</label>
+          <input
+            name="precio"
+            type="number"
+            step="0.01"
+            value={form.precio}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Stock*</label>
+          <input
+            name="stock"
+            type="number"
+            value={form.stock}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Descripción</label>
+          <input
+            name="descripcion"
+            value={form.descripcion}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Imagen URL</label>
+          <input
+            name="imagen_url"
+            value={form.imagen_url}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Categoria ID</label>
+          <input
+            name="categoria_id"
+            type="number"
+            value={form.categoria_id}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          {submitting ? 'Guardando...' : 'Agregar'}
+        </button>
+      </form>
 
       {/* Grid Responsivo: 1 col móvil, 2 tablet, 3 desktop */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

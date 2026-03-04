@@ -51,3 +51,5 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
+// Recuerda esto para el examen cabecera: Authorization:'bearer${token}'  cheque
