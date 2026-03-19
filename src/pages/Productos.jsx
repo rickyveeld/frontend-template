@@ -14,7 +14,8 @@ const Productos = () => {
     stock: '',
     descripcion: '',
     imagen_url: '',
-    categoria_id: ''
+    categoria_id: '',
+    youtube_id: ''
   });
   const [submitError, setSubmitError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -155,6 +156,16 @@ const Productos = () => {
             className="mt-1 block w-full border rounded p-2"
           />
         </div>
+        <div>
+          <label className="block text-sm font-medium">Youtube_id</label>
+          <input
+            name="youtube_id"
+            type="number"
+            value={form.youtube_id}
+            onChange={handleChange}
+            className="mt-1 block w-full border rounded p-2"
+          />
+        </div>
         <button
           type="submit"
           disabled={submitting}
@@ -173,7 +184,7 @@ const Productos = () => {
             {/* Imagen del producto */}
             <div className="h-48 p-4 bg-white flex items-center justify-center border-b border-slate-50">
               <img 
-                src={prod.imagen_url || "https://via.placeholder.com/150"} 
+                src={'https://www.youtube.com/embed/' + prod.youtube_id } 
                 alt={prod.nombre} 
                 className="max-h-full object-contain"
               />
